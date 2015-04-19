@@ -2,6 +2,7 @@ package com.weiwangcn.testgame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.weiwangcn.testgame.helpers.InputHandler;
 import com.weiwangcn.testgmae.gameworld.GameRenderer;
 import com.weiwangcn.testgmae.gameworld.GameWorld;
 
@@ -9,11 +10,19 @@ public class GameScreen implements Screen {
 
     private GameWorld world;
     private GameRenderer renderer;
+    private float runTime;
 
     public GameScreen() {
-        Gdx.app.log("GameScreen", "Attached");
-        world = new GameWorld();
-        renderer = new GameRenderer(world);
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+        float gameWidth = 136;
+        float gameHeight = screenHeight / (screenWidth / gameWidth);
+
+        int midPointY = (int) (gameHeight / 2);
+
+        world = new GameWorld(midPointY);
+        renderer = new GameRenderer(world, (int) gameHeight, midPointY);
+        Gdx.input.setInputProcessor(new InputHandler(world.getBird()));
     }
 
     @Override
@@ -23,8 +32,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        runTime += delta;
         world.update(delta);
-        renderer.render();
+        renderer.render(runTime);
     }
 
     @Override
